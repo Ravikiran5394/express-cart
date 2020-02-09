@@ -1,4 +1,7 @@
+const monogdb = require("mongodb");
 const Product = require("../modules/product");
+
+const ObjectId = monogdb.ObjectID;
 
 exports.getAddproduct = (req, res, next) => {
   res.render("admin/edit-product", {
@@ -13,7 +16,7 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(title, price, description, imageUrl);
+  const product = new Product(title, price, description, imageUrl, null);
   product
     .save()
     .then(result => {
@@ -21,9 +24,7 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect("/admin/products");
     })
     .catch(err => {
-      if (err) {
-        console.log(err);
-      }
+      console.log(err);
     });
 };
 
@@ -38,12 +39,12 @@ exports.getEditProduct = (req, res, next) => {
       if (!product) {
         return res.redirect("/");
       }
-      res.render("admin/edit-product",{
+      res.render("admin/edit-product", {
         pageTitle: "Edit Product",
         path: "/admin/edit-product",
         editing: editMode,
         product: product
-      })
+      });
     })
     .catch(err => {
       console.log(err);
@@ -68,15 +69,22 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDescription = req.body.description;
 
-  const updatedProduct = new Product(
-    prodId,
+  const product = new Product(
     updatedTitle,
-    updatedImageUrl,
+    updatedPrice,
     updatedDescription,
-    updatedPrice
+    updatedImageUrl,
+    new ObjectId(prodId)
   );
-  updatedProduct.save();
-  res.redirect("/admin/products");
+  product
+    .save()
+    .then(result => {
+      console.log('UPDATED PROJECT!');
+      res.redirect('/admin/products');
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
 
 exports.getProducts = (req, res, next) => {
