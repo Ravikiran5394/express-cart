@@ -1,7 +1,4 @@
-const monogdb = require("mongodb");
 const Product = require("../modules/product");
-
-const ObjectId = monogdb.ObjectID;
 
 exports.getAddproduct = (req, res, next) => {
   res.render("admin/edit-product", {
@@ -74,13 +71,13 @@ exports.postEditProduct = (req, res, next) => {
     updatedPrice,
     updatedDescription,
     updatedImageUrl,
-    new ObjectId(prodId)
+    prodId
   );
   product
     .save()
     .then(result => {
-      console.log('UPDATED PROJECT!');
-      res.redirect('/admin/products');
+      console.log("UPDATED PROJECT!");
+      res.redirect("/admin/products");
     })
     .catch(err => {
       console.log(err);
@@ -104,6 +101,11 @@ exports.getProducts = (req, res, next) => {
 // /delete-product => POST => controller
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteById(prodId);
-  res.redirect("/admin/products");
+  Product.deleteById(prodId)
+    .then(() =>{
+      res.redirect("/admin/products");
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
