@@ -7,7 +7,19 @@ class Product {
         this.description = description;
         this.imageUrl = imageUrl;
     }
+    // Methods =>
     save(){
+        const db = getDb();
+        return db.collection('products')
+            .insertOne(this)
+            .then(result => {
+                console.log(result.insertedCount + " Product inserted!");
+            })
+            .catch(err =>{
+                console.log(err);
+            });
+    }
+    static fetchAll(){
 
     }
 }

@@ -5,8 +5,8 @@ let _db;
 const mongoConnect = (callback) => {
     MongoClient.connect('mongodb://127.0.0.1:27017/express-cart')
             .then(client =>{
-                console.log('connected!');
-                _db = client.db;
+                console.log('Database connected!');
+                _db = client.db();
                 callback();
             })
             .catch(err =>{
