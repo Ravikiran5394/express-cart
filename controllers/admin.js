@@ -33,6 +33,21 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect("/");
   }
   const prodId = req.params.productId;
+  Product.findById(prodId)
+    .then(product => {
+      if (!product) {
+        return res.redirect("/");
+      }
+      res.render("admin/edit-product",{
+        pageTitle: "Edit Product",
+        path: "/admin/edit-product",
+        editing: editMode,
+        product: product
+      })
+    })
+    .catch(err => {
+      console.log(err);
+    });
   Product.findById(prodId, product => {
     if (!product) {
       return res.redirect("/");
@@ -65,13 +80,17 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render("admin/products", {
-      prods: products,
-      pageTitle: "Products",
-      path: "admin/products"
+  Product.fetchAll()
+    .then(products => {
+      res.render("admin/products", {
+        prods: products,
+        pageTitle: "Products",
+        path: "admin/products"
+      });
+    })
+    .catch(err => {
+      console.log(err);
     });
-  });
 };
 
 // /delete-product => POST => controller

@@ -38,13 +38,11 @@ class Product {
   }
   static findById(prodId) {
     const db = getDb();
-    console.log(prodId)
     return db
       .collection("products")
       .find({ _id: new mongodb.ObjectID(prodId) })
       .next()
       .then(product => {
-        console.log(product);
         return product;
       })
       .catch(err => {
