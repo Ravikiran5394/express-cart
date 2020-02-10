@@ -20,13 +20,13 @@ exports.getProductDetail = (req, res, next) => {
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then(product => {
-      res.render("shop/product-detail",{
+      res.render("shop/product-detail", {
         product: product,
         pageTitle: product.title,
         path: "/products"
-      })
+      });
     })
-    .catch(err =>{
+    .catch(err => {
       console.log(err);
     });
 };
@@ -68,10 +68,16 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findById(prodId, product => {
-    Cart.addProduct(prodId, product.price);
-  });
-  res.redirect("/products");
+  Product.findById(prodId)
+    .then(product => {
+      return req.user.addToCart(product);
+    })
+    .then(() => {
+      res.redirect('/')
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
