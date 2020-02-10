@@ -56,7 +56,7 @@ exports.getCart = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err)
+      console.log(err);
     });
 };
 
@@ -66,8 +66,9 @@ exports.postCart = (req, res, next) => {
     .then(product => {
       return req.user.addToCart(product);
     })
-    .then(() => {
-      res.redirect("/");
+    .then(result => {
+      console.log(req);
+      res.redirect("/cart");
     })
     .catch(err => {
       console.log(err);
@@ -76,10 +77,14 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findById(prodId, product => {
-    Cart.deleteProduct(prodId, product.price);
-    res.redirect("/cart");
-  });
+  req.user
+    .deleteItemFromCart(prodId)
+    .then(result =>{
+      res.redirect('/cart');
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
 exports.getOrders = (req, res, next) => {
   res.render("shop/orders", {

@@ -65,7 +65,8 @@ class User {
       .collection("products")
       .find({ _id: { $in: productIds } })
       .toArray()
-      .then(products => {//products elements has all data related to it imported from products collection
+      .then(products => {
+        //products elements has all data related to it imported from products collection
         return products.map(p => {
           return {
             ...p,
@@ -75,6 +76,18 @@ class User {
           };
         });
       });
+  }
+  deleteItemFromCart(productId) {
+    const updatedCartItems = this.cart.items.filter(
+      item => item.productId.toString() !== productId.toString()
+    );
+    const db = getDb();
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: { items: updatedCartItems } } }
+      );
   }
 }
 
