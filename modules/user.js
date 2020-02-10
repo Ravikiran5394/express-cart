@@ -18,16 +18,19 @@ class User {
   // add to cart
   addToCart(product) {
     const cartProuctIndex = this.cart.items.findIndex(
-      cp => cp.productId.toString() === product._id.toString()//Treat both Ids as string for comparison
+      cp => cp.productId.toString() === product._id.toString() //Treat both Ids as string for comparison
     );
     let newQuantity = 1;
     const updatedCartItems = [...this.cart.items];
 
-    if(cartProuctIndex >= 0){
+    if (cartProuctIndex >= 0) {
       newQuantity = this.cart.items[cartProuctIndex].quantity + 1;
       updatedCartItems[cartProuctIndex].quantity = newQuantity;
-    }else{
-      updatedCartItems.push({ productId: new ObjectId(product._id), quantity: newQuantity })
+    } else {
+      updatedCartItems.push({
+        productId: new ObjectId(product._id),
+        quantity: newQuantity
+      });
     }
     const updatedCart = {
       items: updatedCartItems
@@ -51,6 +54,26 @@ class User {
       })
       .catch(err => {
         console.log(err);
+      });
+  }
+  getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map(i => {
+      return i.productId;
+    });
+    return db
+      .collection("products")
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then(products => {//products elements has all data related to it imported from products collection
+        return products.map(p => {
+          return {
+            ...p,
+            quantity: this.cart.items.find(i => {
+              return i.productId.toString() === p._id.toString();
+            }).quantity
+          };
+        });
       });
   }
 }
