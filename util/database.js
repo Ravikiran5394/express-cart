@@ -24,3 +24,5 @@ const getDb = () =>{
 
 exports.mongoConnect = mongoConnect;
 exports.getDb = getDb;
+
+// Testing Fetch command lets see if it works!!!!!!!!!!!!!
