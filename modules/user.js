@@ -79,9 +79,18 @@ class User {
   // addOrder Method
   addOrder() {
     const db = getDb();
-    return db
-      .collection("orders")
-      .insertOne(this.cart)
+    return this.getCart()
+      .then(products => {
+        const order = {
+          items: products,
+          user: {
+            _id: new ObjectId(this._id),
+            name: this.name,
+            email: this.email
+          }
+        };
+        return db.collection("orders").insertOne(order)
+      })
       .then(result => {
         // Empty the cart
         this.cart = { items: [] };
@@ -92,9 +101,17 @@ class User {
             { _id: new ObjectId(this._id) },
             { $set: { cart: { items: [] } } }
           );
+      })
+      .catch(err => {
+        console.log(err);
       });
   }
   // getOrders method => GET
+  getOrders() {
+    const db = getDb();
+    //search db by id {this._id}
+    return db.collection("orders").findA;
+  }
   // findById method
   static findById(userId) {
     const db = getDb();
@@ -108,8 +125,6 @@ class User {
         console.log(err);
       });
   }
-
-
 }
 
 // export User
