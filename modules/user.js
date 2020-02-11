@@ -89,7 +89,7 @@ class User {
             email: this.email
           }
         };
-        return db.collection("orders").insertOne(order)
+        return db.collection("orders").insertOne(order);
       })
       .then(result => {
         // Empty the cart
@@ -110,7 +110,10 @@ class User {
   getOrders() {
     const db = getDb();
     //search db by id {this._id}
-    return db.collection("orders").findA;
+    return db
+      .collection("orders")
+      .find({ "user._id": new ObjectId(this._id) })
+      .toArray();
   }
   // findById method
   static findById(userId) {
